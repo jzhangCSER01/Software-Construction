@@ -1,0 +1,27 @@
+package example01;
+
+import java.util.Random;
+
+public class BinaryOperation_0 {
+	public static void main(String[] args) {
+		int m=0,n=0,ov=0;
+		int[] result = new int[50];
+		char o='+';
+		Random random = new Random();
+		System.out.println("以下是随机生成的题目：");
+		for(int i=0;i<50;i++) {
+			ov = (int)random.nextInt(2);
+			m = (int)random.nextInt(101);
+			n = (int)random.nextInt(101);
+			if(ov==1) {
+				o = '+';
+				result[i]=m+n;
+			}
+			else {
+				o = '-';
+				result[i]=m-n;
+			}
+			System.out.println(""+"第"+(i+1)+"题"+":\t"+m+o+n+"="+"?");
+		}
+	}
+}
