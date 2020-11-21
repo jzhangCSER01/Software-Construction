@@ -1,0 +1,125 @@
+package example01;
+
+import java.util.Random;
+
+public class v0_2 {
+	public static void main(String[] args) {
+		final int EQUATION_NUM = 50;   //习题中算式的数量
+		int[][] exercise;              // 习题集二维数组
+		
+		/* 打印加法算式习题  */
+		printHeader("以下是加法习题：");	//输出头部信息
+		exercise = generateExerciseOfAdditionEquation(EQUATION_NUM);  // 产生加法算式习题
+		printExercise(exercise); //打印习题
+		
+		/* 打印减法算式习题  */
+		printHeader("以下是减法习题：");	//输出头部信息
+		exercise = generateExerciseOfSubtractionEquation(EQUATION_NUM);  // 产生减法算式习题
+		printExercise(exercise); //打印习题
+	}
+	
+	public static int generateOperand() {	//生成一个100以内的随机整数
+		Random random = new Random();
+		return (int)random.nextInt(101);
+	}
+	
+	private static int[] generateAdditionEquation() {	//产生一个加法算式
+		int left_operand;	//左操作数
+		int right_operand;	//右操作数
+		int equation[] = new int[] {0,0,0};	//存放算式的数组
+		//生成两个满足约束条件的整数
+		do {
+			left_operand=generateOperand();
+			right_operand=generateOperand();
+		}while(!check(left_operand,0,100) || !check(right_operand,0,100));
+		equation[0]=left_operand;	//左边操作数
+		equation[1]=right_operand;	//右边操作数
+		equation[2]=0;	//操作符 0表示'+' 1表示'-'
+		return equation;
+	}
+	
+	private static boolean check(int anInteger, int low, int high) {	//检查一个数anInteger是否在范围[low,high]
+		return anInteger>= low && anInteger<=high;
+	}
+	
+	private static int[] generateSubstractEquation() {	//产生一个减法算式
+		int left_operand;	//左操作数
+		int right_operand;	//右操作数
+		int equation[] = new int[] {0,0,0};	//存放算式的数组
+		//生成两个满足约束条件的整数
+		do {
+			left_operand=generateOperand();
+			right_operand=generateOperand();
+		}while(!check(left_operand,0,100) || !check(right_operand,0,100));
+		equation[0]=left_operand;	//左边操作数
+		equation[1]=right_operand;	//右边操作数
+		equation[2]=1;	//操作符 0表示'+' 1表示'-'
+		return equation;
+	}
+
+	/**
+	 * 产生加法算式习题集
+	 * equation_num：习题集中算式的数量
+	 * return：返回习题二维数组[equation_num][3]
+	 */
+	public static int[][] generateExerciseOfAdditionEquation(int equation_num){
+		int equation[];   // 算式     //[操作数1，操作数2，操作符]
+		int[][] exercise = new int[equation_num][3];  
+		int e_index = 0; //目前习题中算式的个数
+		
+		for(int i = 0; i < equation_num; i++) {
+			equation = generateAdditionEquation(); //产生一个加法算式
+			exercise[e_index++] = equation;   // 把算式e存放在习题exercise中，游标加1
+		}
+		return exercise;
+	}
+	
+	/**
+	 * 产生减法算式习题集
+	 * equation_num：习题集中算式的数量
+	 * return：返回习题二维数组[equation_num][3]
+	 */
+	public static int[][] generateExerciseOfSubtractionEquation(int equation_num){
+		int equation[];   // 算式     //[操作数1，操作数2，操作符]
+		int[][] exercise = new int[equation_num][3];  
+		int e_index = 0; //目前习题中算式的个数
+		
+		for(int i = 0; i < equation_num; i++) {
+			equation = generateSubstractEquation(); //产生一个减法算式
+			exercise[e_index++] = equation;   // 把算式e存放在习题exercise中，游标加1
+		}
+		return exercise;
+	}
+	
+	/**
+	 * 打印头部信息
+	 */
+	public static void printHeader(String str) {
+		System.out.println("------------------------------------");
+		System.out.println(str);
+		System.out.println("------------------------------------");
+	}
+	
+	/**
+	 * 打印习题集
+	 * 每打印五个习题换行
+	 * exercise：习题集二维数组[equation_num][3]
+	 */
+	public static void printExercise(int[][] exercise){
+		int left_operand,right_operand;  //操作数
+		int equation[];   // 算式     //[操作数1，操作数2，操作符]
+		int operator;	//操作符
+		for(int i=0;i<exercise.length;i++) {
+			equation=exercise[i];
+			left_operand=equation[0];
+			right_operand=equation[1];
+			operator=equation[2];
+			if(operator==0) {	//加法算式
+				System.out.println(left_operand+"+"+right_operand+"="+"?");
+			}
+			else {	//减法算式
+				System.out.println(left_operand+"-"+right_operand+"="+"?");
+			}
+		}
+	}
+}
