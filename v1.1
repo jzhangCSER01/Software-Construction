@@ -1,0 +1,239 @@
+package v1_1;
+
+import java.util.Random;
+
+
+/*
+ * 定义算式抽象类
+ * 加法子类和减法子类继承该类
+ * */
+public abstract class BinaryOperation {
+	static final int HIGH=100;
+	static final int LOW=0;
+	protected int left_operand;	//定义左操作数
+	protected int right_operand;	//定义右操作数
+	protected char operator;	//定义操作符
+	protected int value;	//定义运算结果
+	
+	/* get访问器 */
+	public int getLeft_operand() {
+		return left_operand;
+	}
+
+	public int getRight_operand() {
+		return right_operand;
+	}
+
+	public char getOperator() {
+		return operator;
+	}
+
+	public int getValue() {
+		return value;
+	}
+	
+	/* 
+	 * 产生加减法算式方法
+	 * 传入的anOperator即为该类生成的算式的运算符号
+	 *  */
+	protected void generateBinaryOperation(char anOperator) {
+		Random random = new Random();	//创建random对象
+		int left,right,result;
+		left = random.nextInt(HIGH+1);
+		do{
+			//约束，两位整数必须符合约束条件才能赋值给成员函数
+				right = random.nextInt(HIGH+1);
+				result = calculate(left,right);
+			}while(!(checkingCalculation(result)));
+		left_operand = left;
+		right_operand = right;
+		operator = anOperator;
+		value = result;
+	}
+
+	/* 抽象方法 计算结果 */
+	abstract int calculate(int left, int right);
+
+	/* 抽象方法 判断结果是否符合约束 */
+	abstract boolean checkingCalculation(int result);
+	
+	/* 判断算式是否相等 */
+	public boolean equals(BinaryOperation anOperation) {
+		return operator==anOperation.getOperator()&&
+				left_operand==anOperation.getLeft_operand()&&
+				right_operand==anOperation.getRight_operand();
+	}
+}
+package v1_1;
+
+/*
+ * 加法算式类
+ * 继承算式类
+ * */
+public class AdditionOperation extends BinaryOperation {
+
+	/* 构造方法 */
+	public AdditionOperation() {
+		generateBinaryOperation('+');
+	}
+	
+	/* 方法重写 判断结果是否符合约束 */
+	public boolean checkingCalculation(int anInteger) {
+		return anInteger<=HIGH;
+	}
+	
+	/* 方法重写 计算结果 */
+	int calculate(int left,int right) {
+		return left+right;
+	}
+}
+package v1_1;
+
+/*
+ * 减法算式类
+ * 继承算式类
+ * */
+public class SubstractOperation extends BinaryOperation {
+
+	/* 构造方法 */
+	public SubstractOperation() {
+		generateBinaryOperation('-');
+	}
+	
+	/* 方法重写 判断结果是否符合约束 */
+	public boolean checkingCalculation(int anInteger) {
+		return anInteger>=LOW;
+	}
+	
+	/* 方法重写 计算结果 */
+	int calculate(int left,int right) {
+		return left-right;
+	}
+}
+package v1_1;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+import v1_1.BinaryOperation;
+
+/*
+ * 习题产生类
+ * 产生一定数量的加减法习题
+ * */
+public class GenerateExercise {
+	/* 把ArrayList类型的operationList封装成GenerateExercise的私有成员 */
+	private ArrayList<BinaryOperation> operationList=new ArrayList<BinaryOperation>();
+	private int current=0;	//用于遍历数据集
+	
+	/* 产生一定数量的加减法习题 */
+	public void generateBinaryExercise(int operationCount) {
+		int operatorvalue;	//0为+ 1为-
+		Random random = new Random();	//创建random对象
+		BinaryOperation anOperation;
+		while(operationCount>0) {
+			operatorvalue = random.nextInt(2);
+			if(operatorvalue==0) {
+				do {
+					anOperation=new AdditionOperation();
+				}while(operationList.contains(anOperation));
+				operationList.add(anOperation);
+				operationCount--;
+			}
+			else {
+				do {
+					anOperation=new SubstractOperation();
+				}while(operationList.contains(anOperation));
+				operationList.add(anOperation);
+				operationCount--;
+			}
+		}
+	}
+	
+	/* 产生一定数量的加法习题 */
+	public void generateAdditionExercise(int operationCount) {
+		BinaryOperation anOperation;
+		while(operationCount>0) {
+			do {
+				anOperation=new AdditionOperation();
+			}while(operationList.contains(anOperation));
+			operationList.add(anOperation);
+			operationCount--;
+		}
+	}
+	
+	/* 产生一定数量的减法习题 */
+	public void generateSubstractExercise(int operationCount) {
+		BinaryOperation anOperation;
+		while(operationCount>0) {
+			do {
+				anOperation=new SubstractOperation();
+			}while(operationList.contains(anOperation));
+			operationList.add(anOperation);
+			operationCount--;
+		}
+	}
+	
+	/* 若有元素，返回true，否则返回false */
+	public boolean hasNext() {
+		return current<=operationList.size()-1;
+	}
+	
+	/* 返回当前算式 */
+	public BinaryOperation next() {
+		return operationList.get(current++);
+	}
+}
+package v1_1;
+
+
+import v1_1.BinaryOperation;
+
+public class ExerciseSheet {
+	
+	private static final int COLUMN_NUM=5;	//默认每打印5个换行一次
+	
+	/* 每打印columns个习题换行一次 */
+	public void formattedDisplay(GenerateExercise exercise,int columns) {
+		int count=1;	//计数器
+		int column=1;	//默认每行打印1个习题
+		while(exercise.hasNext()) {
+			BinaryOperation ex = exercise.next();	//next()迭代器
+			if(column>columns) {
+				System.out.println();	//每行打印输出columns个习题
+				column=1;	//每换行一次让count重置为1
+			}
+			System.out.print(count+": "+ex.getLeft_operand()+String.valueOf((ex).getOperator())+(ex).getRight_operand()+"="+"\t");
+			count++;
+			column++;
+		}
+	}
+	
+	/* 多态 默认每打印5个习题换行一次 */
+	public void formattedDisplay(GenerateExercise exercise) {
+		formattedDisplay(exercise,COLUMN_NUM);
+	}
+	
+	public static void main(String[] args) {
+		ExerciseSheet sheet=new ExerciseSheet();
+		GenerateExercise exercise=new GenerateExercise();
+	
+		System.out.println("打印36道加法习题：");
+		System.out.println("---------");
+		exercise.generateAdditionExercise(36);
+		sheet.formattedDisplay(exercise,6);
+		System.out.println();
+		
+		System.out.println("打印36道减法习题：");
+		System.out.println("---------");
+		exercise.generateSubstractExercise(36);
+		sheet.formattedDisplay(exercise,6);
+		System.out.println();
+		
+		System.out.println("打印36道加减法习题：");
+		System.out.println("---------");
+		exercise.generateBinaryExercise(36);
+		sheet.formattedDisplay(exercise,6);
+		System.out.println();
+	}
+}
